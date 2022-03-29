@@ -103,6 +103,8 @@ EntryPoint ["./elasticseach"]
 
 ## 理解構建上下文 (build context)
 
+reference: [Docker Build 工作原理](https://blog.csdn.net/qianghaohao/article/details/87554255)
+
 - `send xxx to docker daemon`: 先加載要傳進 docker 的東西, 然後再執行`ADD xxx`動作
 - `docker build` 默認查找當前目錄的 dockerfile 作為構建輸入, 也可以通過 -f 制定 dockerfile
   - docker build -f ./Dockerfile
@@ -149,3 +151,64 @@ CMD [*--help*]
 - FROM aa AS bb
 - LABELS: 按標籤組織項目
   - LABELS multi.label1="value1" multi.label2="value2" other="value3"
+  - 配合 lable filter 可過濾鏡像查詢結果
+  - `docker images -f lable=multi.label1="value1"`
+- RUN: 執行命令
+  - 最常見的用法: `RUN apt-get update && apt-get install`
+    - 這兩條命令應該永遠用`&&`連接, 如果分開執行, `RUN apt-get update` 構建層被緩存, 可能會導致新 package 無法安裝
+    - 這種方法可以有效的減少 overlay FS 的層級
+- CMD: 容器鏡像中包含應用的運行命令, 需要帶參數
+  - `CMD ["executable", "param1", "param2"...]`
+- EXPOSE: 暴露端口, 方便聲明
+  - `EXPOSE <port> [<port> / <protocol>...]`
+    - 是鏡像創建者和使用者的約定
+    - 在 `docker run -P` 時, docker 會自動映射 expose 的端口到主機大端口, 如 0.0.0.0:32768 -> 80/tcp
+- ENV 設置環境變量
+  - `ENV <key> = <value> ...`
+- ADD: 從源地址(文件, 目錄, URL) 複製文件到目標路徑
+  - `ADD [--chown=<user>:<group>] <src>...<dest>`
+  - `ADD [--chown=<user>:<group>] ["<src>",..."<dest>"]` 路徑有空格時使用
+  - 支持 Go 風格的通配符, 如`ADD check* /testdir/`
+  - 如果 src 是個本地壓索文件, 則在 ADD 的同時完成解壓操作
+  - 如果 src 是 URL
+    - 如果 dest 結尾沒有`/`, 則視為文件名, 否則則視為文件夾
+    - 應盡量減少通過`ADD URL`添加 remote 文件, 建議使用 curl 或者 wget && untar
+- COPY: 與 ADD 類似
+  - 區別:
+    - 不支持 URL
+    - 不解壓文件
+    - 語義更直白, 所以盡量用 COPY
+- ENTRYPOINT: 定義可以執行的容器鏡像入口命令
+  - `ENTRYPOIN ["exe", "param", "param2"...]`docker run 追加參數模式
+  - `ENTRYPOINT command param1 param2` docker run 替換參數模式
+  - ENTRYPOINT 的最佳實踐是用 ENTRYPOINT 定義鏡像主命令, 並通過 CMD 定義主要參數, 如下所示
+    - `ENTRYPOINT ["s3cmd"]
+    - `CMD ["--help"]
+
+## Dockerfile 最佳實踐
+kkk
+TODO: 12 Factor
+
+### 目標: 易管理, 少漏洞, 鏡像小, 層級少, 利用緩存
+
+- 不要安裝無效軟件包
+- 應簡化鏡像中 同時運行的進程數, 理想情況下, 每個鏡像應該只有一個進程
+- 當無法避免同一鏡像運行多個進程時, 應選擇合理的初始化進程(init process)
+- 最小化層數
+  - 最新的 docker 只有 RUN, COPY, ADD 創建新層, 其他指令創建臨時層, 不會增加鏡像的大小
+    - 比如 EXPOSE 指令就不會生層新層
+  - 多條 RUN 命令可通過連接符(&&)連接成一條指令集以減少層數
+  - 通過多段構建減少鏡像層數
+- 把`多行參數`按`字母排序`, 可以減少可能出現的重複參數, 並且提高可讀性
+- 編寫 Dockerfile 的時候, 應該把變更頻率低的編譯指令`優先構建`, 以便放在鏡像底層以有效利用 build cache
+- 複製文件時, 每個文件應`獨立複製`, 這確保某個文件變更時, `只影響文件對應的緩存`
+
+## 基於 Docker 鏡像的版本管理
+
+- Docker tag
+  - `docker tag 0exxxxxxx hub.docker.com/cncamp/httpserver:v1.0`
+    - hub.docker.com: 默認 hub.docker.com
+    - cncamp: repositry
+    - httpserver: 鏡像名
+    - v1.0: tag, 常用來記錄版本信息
+
