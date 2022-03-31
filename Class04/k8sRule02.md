@@ -195,3 +195,44 @@ Node 不能重名(name), 是集群唯一的
 - 可以將多個容器鏡像組合成一個 Pod, 它們共享 PID, IPC, Newwork 和 UTS namespace, 是 k8s 調度的基本單位
 - Pod 的設計理念是支持多個容器在一個 Pod 中共享網絡和文件系統,可以通過進程間通信和文件共享這種簡單高效的方式組合完成服務
 - 同一個 Pod 中的不同容器可共享資源
+
+### 如何通過 Pod 對象定義支撐應用程序
+
+- 環境變量:
+  - 直接設置值
+  - 讀取 Pod Spec 的某些值
+  - 從 ConfigMap 讀取某些值
+  - 從 Secret 讀取某個值
+
+## 存儲卷
+
+- 通過存儲卷可以將外掛存儲掛載到 Pod 內部使用
+- 存儲卷定義包括兩個部分: Volume 和 VolumeMounts.
+- Volume: 定義 Pod 可以使用的存儲卷來源
+- VolumeMounts: 定義存儲卷如何 Mount 到容器內部
+
+## Pod 網絡
+
+一個容器起起來, 另一個容器可以通過 IP 直連到另一個容器
+
+## 資源限制
+
+k8s 通過 Cgroups 提供容器資源管理的功能
+
+`k set resources deployment nginx-app -c=nginx --limits=cpu=500m, memonry=128Mi`
+
+## 健康檢查
+
+k8s 會確保容器在部署後確實處在正常的運行狀態
+
+- 探針類型:
+  - LivenessProbe:
+    - 檢測是否活著, 沒活則刪了重開
+  - ReadinessProbe:
+    - 檢查應用是否就緒且處於正常服務狀態, 如果不正常則不會接受來自 k8s Service 的流量
+  - startupProbe:
+    - 檢查應用是否啟動完成, 如果在`failuerThreshold*periodSeconds`週期內未就緒, 則應用程序會被重啟
+- 探活方式:
+  - Exec
+  - TCP socket
+  - HTTP
