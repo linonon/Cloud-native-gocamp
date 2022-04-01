@@ -24,7 +24,32 @@ etcd 可以通過命令和設置選項控制 compact (壓縮版本)
 - 通過 RPC 發送給 Follower
   - Input: MsgApp
   - Output: MsgAppResp
+- 寫 WAL 日誌:
+  - 日誌模塊, 保證一致性
 - 收到半數確認:
   - 更新 MatchIndex (還 Get 不到)
-  - Apply: 存到 MVCC 模塊
+  - Apply: 存到 MVCC 模塊 (最終確認的地方)
     - treeIndex
+      - 無論對一個 key 做什麼操作, 都會有對應的 revision 生成
+      - `key: y`
+      - `modified: <4,0>`
+      - `generations: [{ver:1, created:<3,0>, revisions:[<3,0>,<4,0>]}]`: 3版本創建, 現在是從 3 到 4
+    - boltDB
+      - key: 版本號
+      - value: treeIndex 裡的東西
+
+### Watch 機制
+
+![etcdV3存儲](pic/etcdV3Store.png)
+
+- Watcher
+  - key watcher
+  - range watcher
+
+- Group
+  - synced
+  - unsynced
+
+## Alarm && Disalarm
+
+寫爆磁盤後, etcd 只能讀了, 可以通過`defrag`刪除資料
