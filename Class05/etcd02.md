@@ -53,3 +53,10 @@ etcd 可以通過命令和設置選項控制 compact (壓縮版本)
 ## Alarm && Disalarm
 
 寫爆磁盤後, etcd 只能讀了, 可以通過`defrag`刪除資料
+
+## K8s 如何使用 etcd
+
+對於每個 k8s object, 都有對應的 storage.go 負責對象的存儲操作
+`pkg/registry/core/pod/storage/storage.go`
+
+ 
