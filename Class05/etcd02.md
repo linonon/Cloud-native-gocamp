@@ -58,5 +58,3 @@ etcd 可以通過命令和設置選項控制 compact (壓縮版本)
 
 對於每個 k8s object, 都有對應的 storage.go 負責對象的存儲操作
 `pkg/registry/core/pod/storage/storage.go`
-
- 
