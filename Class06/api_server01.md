@@ -27,3 +27,4 @@ k8s 的核心組件之一:
 - Webhook 令牌身份確認:
   - `authentication-token-webhook-config-file` 指向一個配置文件, 其中描述如何遠程訪問的 Webhook 服務
   - `--authentication-token-webhook-cache-ttl` 用來設定身份認證決定的緩存時間, 默認時長兩分鐘.
+
