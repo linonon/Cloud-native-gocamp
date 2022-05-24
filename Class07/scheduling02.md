@@ -21,3 +21,7 @@
   - 與 replicaset 不同: 每個 pod 名字的後綴不是隨機值而是 0, 1, 2, 3...
 - Volume Controller: 依據 PV spec 創建
 - Namespace Controller: 保證 namespace 刪除時, 該 namespace 下的所有資源都先被刪除.
+- Replication Controller: 創建 RC 後, 負責創建 POD.
+- Node Controller: 維護 Node 狀態, 處理 evict 請求- Replication Controller: 創建 RC 後, 負責創建 POD.
+- Node Controller: 維護 Node 狀態, 處理 evict 請求等
+- Daemon Controller: 依據 damonset 創建 pod.
