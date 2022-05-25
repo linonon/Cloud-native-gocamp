@@ -22,6 +22,21 @@
 - Volume Controller: 依據 PV spec 創建
 - Namespace Controller: 保證 namespace 刪除時, 該 namespace 下的所有資源都先被刪除.
 - Replication Controller: 創建 RC 後, 負責創建 POD.
-- Node Controller: 維護 Node 狀態, 處理 evict 請求- Replication Controller: 創建 RC 後, 負責創建 POD.
 - Node Controller: 維護 Node 狀態, 處理 evict 請求等
 - Daemon Controller: 依據 damonset 創建 pod.
+  - 監聽所有節點: 有新的節點就起新的 pod, 有節點刪除就刪除 pod
+- Garbage collector: 級聯刪除
+
+### 生產經驗
+
+- 保護好 Controller manager 的 kubeconfig:
+  - 此 kubeconfig 擁有所有資源的所有操作權限, 防止普通用戶通過`kubectl exec kube-controller-manager cat` 獲取該文件
+  - 用戶可能做任何你想不到的操作, 然後找你 support
+
+## kubelet 架構
+
+![kubelet架構](pic/kubelet架構.png)
+
+## kubelet 管理 Pod 的核心流程
+
+![kubelet管理pod的核心流程](pic/kubelet管理pod的核心流程.png)

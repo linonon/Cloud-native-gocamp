@@ -37,7 +37,7 @@ Kubernetes 的初始化系統 ( init system )
 
 - 從不同源獲取 Pod 清單, 並按需求啟停 Pod 的核心組件:
   - Pod 清單可從本地文件目錄, 給定的 HTTPServer 或 Kube-APIServer 等源頭獲取
-  - Kubelet 將運行時, 網絡和存儲抽象成了 CRI, CNI, CSI.
+  - Kubelet 將運行時, 網絡和存儲抽象成了 CRI(Container Runtime Interface), CNI, CSI.
 - 負責匯報當前節點的資源信息和健康狀態
 - 負責 Pod 的健康檢查和狀態匯報
 
