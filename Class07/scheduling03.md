@@ -19,3 +19,9 @@
   - portmap: 設置主機端口和容器端口映射
   - bandwidth: 利用 Linux Traffic Control 限流
   - firewall: 通過 iptables 或者 firewalld 為容器設置防火墻規則.
+
+### cidr 計算
+
+`cidr: 192.168.166.128/26` 表示`前 26`都是 0, 後面可 0 可 1, 所以有 2^(32-26) = 2^6 = 64 個可分配的 IP 地址.
+
+## CSI (Container Server Interface)
