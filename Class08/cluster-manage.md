@@ -47,3 +47,26 @@
   - 基於 rpm-ostree 管理系統包
     - rpm-ostree 是一個開源項目, 是的生產系統中構建鏡像非常簡單
     - 支持操作系統升級和回滾的原子操作
+
+### 構建 ostree
+
+- rpm-ostree
+  - 基於 treefile 將 rpm 包構建成 ostree
+  - 管理 ostree 以及 bootloader 配置
+- treefile
+  - refer: 分支名 ( 版本, CPU 架構 )
+  - repo: rpm package repositories
+  - packages: 待安裝組件
+- 將 rpm 構建成 ostree
+  - rpm-ostree compose tree --unified-core --cachedir=cache --repo=./build-repo/path/to/treefile.json
+
+### 加載 ostree
+
+- 初始化項目
+  ostree admin os-init centos-atomic-host
+- 導入 ostree repo
+  ostree remote add atomic <http://ostree.svr/ostree>
+- 拉去 ostree
+  ostree pull atomic centos-atomic-host/8/x86_64/standard
+- 部署 os
+  ostree admin deploy --os=centos-atomic-host-centos-atomic-host/8/x86_64/standard -- karg='root=/dev/atomicos/root'
