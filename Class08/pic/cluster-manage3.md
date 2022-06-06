@@ -106,3 +106,44 @@
   - 主節點和計算節點假如集群
 - Control plane
   - Kubernetes 控制平面組件
+
+## 日常運營中的節點問題歸類
+
+- 可自動修復的問題
+  - 計算節點 Down
+    - Ping 不通
+    - TCP probe 失敗
+    - 節點上的所有應用都不可達
+- 不可自動修復的問題
+  - 文件系統損壞
+  - 磁盤陣列故障
+  - 網盤載入問題
+  - 其他硬件故障
+  - Kernel 出錯, core dumps
+- 其它問題
+  - 軟件 Bug
+  - 進程鎖死, 或者 memory / CPU 競爭問題
+  - Kubernetes 組件問題
+    - Kubelet / Kube-proxy / Docker / Salt
+
+- 設定自動恢復規則
+  - 大多數情況下, 重啟大法好
+  - 重啟不行就重裝
+  - 重裝不行就重修
+
+## Cluster AutoScaler
+
+### 工作機制
+
+- 擴容
+  - 由於資源不足, Pod 調度失敗, 即: 有 pod 一直處於 Pending 狀態
+- 縮容
+  - node 的資源利用率較低時, 持續 10 分鐘低於 50%
+  - 此 node 上存在的 pod 都能被重新調度到其他 node 上運行
+
+### Cluster AutoScaler 架構
+
+- Autoscaler: 核心模塊, 負責整體擴縮容功能
+- Estimator: 負責評估計算`擴容`節點
+- Simulator: 負責模擬調度, 計算`縮容`節點
+- Cloud-Provider: 與雲交互進行節點的增刪操作, 每個支持 CA 的主流廠商都實現自己的 plugin 實現動態縮放
