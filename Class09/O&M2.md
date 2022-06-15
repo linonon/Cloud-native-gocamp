@@ -35,3 +35,12 @@ E2E Conformance Test: 回歸測試
 - Pipeline: 對象定義了一個流水線作業, 一個 Pipeline 對象由一個或數個 Task 對象組成.
 - Task: 一個可獨立運行的任務, 如獲取代碼, 編譯, 或者推送鏡像等等, 當流水線被運行時, Kubernetes 會為每個 Task 創建一個 Pod. 一個 Task 由多個 Step 組成, 每個 Step 體現為這個 Pod 中的一個容器.
   ![Tekton流程](pic/TektonRoad.png)
+
+## argocd
+
+### 使用場景
+
+1. 低成本的 Gitops 利器
+2. 多集群管理
+   1. 不同目的集群: 測試, 集成, 預生產, 生產
+   2. 多生產集群管理
