@@ -68,6 +68,6 @@ log stdout/stderr runtime 轉儲
   - cat /proc/cpuinfo (GOMAXPROXY會在這裡找, 這是不對的)
   - cat /proc/meminfo
   - df -k
-- 解決方案
+- (獲得容器資源的)解決方案
   - 查詢 /proc/1/cgroup 是否包含`kubepods`關鍵字
   - 包含此關鍵詞, 則表明是運行在 Kubernetes 之上.
